@@ -1,27 +1,24 @@
 
 import React, { useState } from 'react';
-import { Users, LogOut, Filter, Plus } from 'lucide-react';
+import { Users, LogOut, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ClientCard from './ClientCard';
 import ClientDetails from './ClientDetails';
-import CreateClientModal from './CreateClientModal';
-import { useAuth } from '@/hooks/useAuth';
-import { useClients, DatabaseClient } from '@/hooks/useClients';
+import { mockClients } from '../data/mockData';
+import type { Client } from '../types/types';
 
-const Dashboard: React.FC = () => {
-  const { signOut, user } = useAuth();
-  const { clients, isLoading } = useClients();
-  const [selectedClient, setSelectedClient] = useState<DatabaseClient | null>(null);
+interface DashboardProps {
+  currentUser: string;
+  onLogout: () => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [activeTab, setActiveTab] = useState('active');
-  const [showCreateClient, setShowCreateClient] = useState(false);
 
-  const handleLogout = async () => {
-    await signOut();
-  };
-
-  const activeClients = clients.filter(client => client.status === 'active');
-  const completedClients = clients.filter(client => client.status === 'completed');
+  const activeClients = mockClients.filter(client => client.status === 'active');
+  const completedClients = mockClients.filter(client => client.status === 'completed');
 
   if (selectedClient) {
     return (
@@ -29,17 +26,6 @@ const Dashboard: React.FC = () => {
         client={selectedClient} 
         onBack={() => setSelectedClient(null)} 
       />
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-gray-600">Загрузка клиентов...</p>
-        </div>
-      </div>
     );
   }
 
@@ -54,27 +40,17 @@ const Dashboard: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg font-semibold text-gray-800">Мои клиенты</h1>
-              <p className="text-sm text-gray-500">{user?.email}</p>
+              <p className="text-sm text-gray-500">{currentUser}</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button 
-              onClick={() => setShowCreateClient(true)}
-              size="sm"
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <Plus className="w-4 h-4 mr-1" />
-              Добавить
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <LogOut className="w-5 h-5" />
-            </Button>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onLogout}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
         </div>
       </header>
 
@@ -102,9 +78,7 @@ const Dashboard: React.FC = () => {
             ))}
             {activeClients.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p>Нет активных клиентов</p>
-                <p className="text-sm">Добавьте первого клиента</p>
+                Нет активных клиентов
               </div>
             )}
           </TabsContent>
@@ -125,11 +99,6 @@ const Dashboard: React.FC = () => {
           </TabsContent>
         </Tabs>
       </div>
-
-      <CreateClientModal
-        isOpen={showCreateClient}
-        onClose={() => setShowCreateClient(false)}
-      />
     </div>
   );
 };

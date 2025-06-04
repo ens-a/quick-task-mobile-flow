@@ -3,25 +3,17 @@ import React from 'react';
 import { Phone, FileText, MapPin, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { DatabaseClient } from '@/hooks/useClients';
+import type { Client } from '../types/types';
 
 interface ClientCardProps {
-  client: DatabaseClient;
+  client: Client;
   onClick: () => void;
 }
 
 const ClientCard: React.FC<ClientCardProps> = ({ client, onClick }) => {
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ru-RU', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
-
   return (
     <Card 
-      className="cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+      className="cursor-pointer hover:shadow-md transition-all duration-200 hover-scale"
       onClick={onClick}
     >
       <CardContent className="p-4">
@@ -57,11 +49,16 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onClick }) => {
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="text-xs text-gray-500">
-            Создан: {formatDate(client.created_at)}
+        {client.orders.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            <div className="text-xs text-gray-500">
+              Заказов: {client.orders.length} 
+              {client.orders.filter(order => order.status === 'active').length > 0 && 
+                ` (${client.orders.filter(order => order.status === 'active').length} активных)`
+              }
+            </div>
           </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );

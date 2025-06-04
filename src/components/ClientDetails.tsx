@@ -6,17 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import OrderCard from './OrderCard';
 import CreateOrderModal from './CreateOrderModal';
-import { DatabaseClient } from '@/hooks/useClients';
-import type { Order } from '../types/types';
+import type { Client, Order } from '../types/types';
 
 interface ClientDetailsProps {
-  client: DatabaseClient;
+  client: Client;
   onBack: () => void;
 }
 
 const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>(client.orders);
 
   const handleCreateOrder = (newOrder: Omit<Order, 'id'>) => {
     const order: Order = {
