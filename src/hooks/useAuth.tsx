@@ -29,16 +29,30 @@ export const useAuth = () => {
   }, []);
 
   const signIn = async (phone: string, password: string) => {
+    // Очищаем состояние перед входом
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Игнорируем ошибки
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
-      email: `${phone}@executor.local`, // Используем телефон как основу для email
+      phone: phone,
       password,
     });
     return { error };
   };
 
   const signUp = async (phone: string, password: string, name: string) => {
+    // Очищаем состояние перед регистрацией
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (err) {
+      // Игнорируем ошибки
+    }
+
     const { error } = await supabase.auth.signUp({
-      email: `${phone}@executor.local`,
+      phone: phone,
       password,
       options: {
         data: {
@@ -51,7 +65,11 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut({ scope: 'global' });
+    if (!error) {
+      // Принудительно обновляем страницу для чистого состояния
+      window.location.href = '/';
+    }
     return { error };
   };
 

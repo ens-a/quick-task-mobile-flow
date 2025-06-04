@@ -16,6 +16,33 @@ const Auth: React.FC = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
 
+  const formatPhoneNumber = (value: string) => {
+    // Удаляем все нецифровые символы
+    const phoneNumber = value.replace(/\D/g, '');
+    
+    // Если номер начинается с 8, заменяем на +7
+    if (phoneNumber.startsWith('8')) {
+      return '+7' + phoneNumber.slice(1);
+    }
+    
+    // Если номер начинается с 7, добавляем +
+    if (phoneNumber.startsWith('7')) {
+      return '+' + phoneNumber;
+    }
+    
+    // Если номер не начинается с 7 или 8, добавляем +7
+    if (phoneNumber.length > 0) {
+      return '+7' + phoneNumber;
+    }
+    
+    return phoneNumber;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !password) return;
@@ -29,6 +56,11 @@ const Auth: React.FC = () => {
         description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Успешный вход",
+        description: "Вы успешно вошли в систему",
+      });
     }
     setLoading(false);
   };
@@ -36,6 +68,15 @@ const Auth: React.FC = () => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone || !password || !name) return;
+
+    if (phone.length < 12) {
+      toast({
+        title: "Ошибка",
+        description: "Введите корректный номер телефона",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
     const { error } = await signUp(phone, password, name);
@@ -51,6 +92,10 @@ const Auth: React.FC = () => {
         title: "Регистрация успешна",
         description: "Вы можете войти в систему",
       });
+      // Переключаемся на вкладку входа
+      setPhone('');
+      setPassword('');
+      setName('');
     }
     setLoading(false);
   };
@@ -83,9 +128,9 @@ const Auth: React.FC = () => {
                     <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                     <Input
                       type="tel"
-                      placeholder="+79991234567"
+                      placeholder="+7 (999) 123-45-67"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={handlePhoneChange}
                       className="pl-10 h-12 text-lg"
                       required
                     />
@@ -143,9 +188,9 @@ const Auth: React.FC = () => {
                     <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                     <Input
                       type="tel"
-                      placeholder="+79991234567"
+                      placeholder="+7 (999) 123-45-67"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={handlePhoneChange}
                       className="pl-10 h-12 text-lg"
                       required
                     />
@@ -165,6 +210,7 @@ const Auth: React.FC = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 h-12 text-lg"
                       required
+                      minLength={6}
                     />
                   </div>
                 </div>
