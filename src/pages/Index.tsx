@@ -1,27 +1,28 @@
 
-import React, { useState } from 'react';
-import LoginForm from '../components/LoginForm';
+import React from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import Auth from './Auth';
 import Dashboard from '../components/Dashboard';
 
 const Index = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string>('');
+  const { user, loading } = useAuth();
 
-  const handleLogin = (phone: string) => {
-    setCurrentUser(phone);
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setCurrentUser('');
-  };
-
-  if (!isAuthenticated) {
-    return <LoginForm onLogin={handleLogin} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Загрузка...</p>
+        </div>
+      </div>
+    );
   }
 
-  return <Dashboard currentUser={currentUser} onLogout={handleLogout} />;
+  if (!user) {
+    return <Auth />;
+  }
+
+  return <Dashboard />;
 };
 
 export default Index;
