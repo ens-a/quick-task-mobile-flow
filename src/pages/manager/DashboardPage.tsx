@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { LogOut, BarChart3, FileText, Users, UserCheck, Package, Receipt } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,12 +12,12 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { SidebarInset } from '@/components/ui/sidebar';
-import AnalyticsPage from './admin/AnalyticsPage';
-import OrdersPage from './admin/OrdersPage';
-import ExecutorsPage from './admin/ExecutorsPage';
-import ClientsPage from './admin/ClientsPage';
-import CatalogPage from './admin/CatalogPage';
-import InvoicesPage from './admin/InvoicesPage';
+import AnalyticsPage from './AnalyticsPage';
+import OrdersPage from './OrdersPage';
+import ExecutorsPage from './ExecutorsPage';
+import ClientsPage from './ClientsPage';
+import CatalogPage from './CatalogPage';
+import InvoicesPage from './InvoicesPage';
 
 interface AdminDashboardProps {
   currentUser: string;

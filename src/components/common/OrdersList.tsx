@@ -1,5 +1,5 @@
 import React from 'react';
-import { Order } from '../types/types';
+import { Order } from '../../types/types';
 import OrderCard from './OrderCard';
 
 interface OrdersListProps {

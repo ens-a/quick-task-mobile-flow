@@ -3,12 +3,11 @@ import { ArrowLeft, Plus, Phone, MapPin, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import OrderCard from './OrderCard';
-import CreateOrderModal from './CreateOrderModal';
-import EditOrderModal from './EditOrderModal';
-import type { Client, Order } from '../types/types';
-import OrdersList from './OrdersList';
-import { useOrderActions } from '../hooks/useOrderActions';
+import OrdersList from '@/components/common/OrdersList';
+import CreateOrderModal from '@/components/common/modals/CreateOrderModal';
+import EditOrderModal from '@/components/common/modals/EditOrderModal';
+import { useOrderActions } from '../../hooks/useOrderActions';
+import type { Client, Order } from '../../types/types';
 
 interface ClientDetailsProps {
   client: Client;

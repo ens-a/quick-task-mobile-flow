@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Calendar, Package, Wrench, Check, Edit, Trash2, FileText, Link, Copy } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { Order } from '../types/types';
+import type { Order } from '../../types/types';
 
 interface OrderCardProps {
   order: Order;

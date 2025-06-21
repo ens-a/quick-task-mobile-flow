@@ -1,9 +1,8 @@
-
 import React from 'react';
-import { Phone, FileText, MapPin, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, FileText, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import type { Client } from '../types/types';
+import type { Client } from '../../types/types';
 
 interface ClientCardProps {
   client: Client;

@@ -1,12 +1,11 @@
-
 import React, { useState } from 'react';
 import { Users, LogOut, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import ClientCard from './ClientCard';
-import ClientDetails from './ClientDetails';
-import { mockClients } from '../data/mockData';
-import type { Client } from '../types/types';
+import ClientCard from '@/components/common/ClientCard';
+import ClientDetailsPage from './ClientDetailsPage';
+import { mockClients } from '../../data/mockData';
+import type { Client } from '../../types/types';
 
 interface DashboardProps {
   currentUser: string;
@@ -22,7 +21,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
   if (selectedClient) {
     return (
-      <ClientDetails 
+      <ClientDetailsPage 
         client={selectedClient} 
         onBack={() => setSelectedClient(null)} 
       />

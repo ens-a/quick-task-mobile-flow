@@ -1,35 +1,21 @@
-
-import React, { useState } from 'react';
-import LoginForm from '../components/LoginForm';
-import Dashboard from '../components/Dashboard';
-import AdminDashboard from '../components/AdminDashboard';
+import React from 'react';
+import LoginForm from '../components/auth/LoginForm';
+import ExecutorDashboardPage from './executor/DashboardPage';
+import ManagerDashboardPage from './manager/DashboardPage';
+import { useAuth } from '../hooks/useAuth';
 
 const Index = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string>('');
-  const [userType, setUserType] = useState<'executor' | 'manager'>('executor');
-
-  const handleLogin = (phone: string, type: 'executor' | 'manager') => {
-    setCurrentUser(phone);
-    setUserType(type);
-    setIsAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    setCurrentUser('');
-    setUserType('executor');
-  };
+  const { isAuthenticated, currentUser, userType, login, logout } = useAuth();
 
   if (!isAuthenticated) {
-    return <LoginForm onLogin={handleLogin} />;
+    return <LoginForm onLogin={login} />;
   }
 
   if (userType === 'manager') {
-    return <AdminDashboard currentUser={currentUser} onLogout={handleLogout} />;
+    return <ManagerDashboardPage currentUser={currentUser} onLogout={logout} />;
   }
 
-  return <Dashboard currentUser={currentUser} onLogout={handleLogout} />;
+  return <ExecutorDashboardPage currentUser={currentUser} onLogout={logout} />;
 };
 
 export default Index;

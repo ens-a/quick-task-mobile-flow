@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter } from 'lucide-react';
 import { mockClients } from '../../data/mockData';
-import OrderCard from '../OrderCard';
 import type { Order } from '../../types/types';
-import OrdersList from '../OrdersList';
+import OrdersList from '@/components/common/OrdersList';
 import { useOrderActions } from '../../hooks/useOrderActions';
-import EditOrderModal from '../EditOrderModal';
+import EditOrderModal from '@/components/common/modals/EditOrderModal';
 
 const OrdersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('active');
