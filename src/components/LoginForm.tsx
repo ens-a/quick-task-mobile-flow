@@ -1,9 +1,9 @@
 
 import React, { useState } from 'react';
-import { Phone, Lock, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Phone } from 'lucide-react';
 
 interface LoginFormProps {
   onLogin: (phone: string) => void;
@@ -11,66 +11,37 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone && password) {
+    if (phone.trim()) {
       onLogin(phone);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl animate-fade-in">
-        <CardHeader className="text-center space-y-4">
-          <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-            <LogIn className="w-8 h-8 text-white" />
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Phone className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-800">
-            Вход для исполнителей
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold">Вход в систему</CardTitle>
+          <p className="text-gray-600">Введите номер телефона</p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Номер телефона
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <Input
-                  type="tel"
-                  placeholder="+7 (999) 123-45-67"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="pl-10 h-12 text-lg"
-                  required
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Input
+                type="tel"
+                placeholder="+7 (999) 123-45-67"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="w-full"
+              />
             </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Пароль
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <Input
-                  type="password"
-                  placeholder="Введите пароль"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12 text-lg"
-                  required
-                />
-              </div>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 transition-colors"
-            >
+            <Button type="submit" className="w-full">
               Войти
             </Button>
           </form>
