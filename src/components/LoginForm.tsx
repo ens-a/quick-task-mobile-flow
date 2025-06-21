@@ -3,19 +3,20 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Phone } from 'lucide-react';
+import { Phone, Users, User } from 'lucide-react';
 
 interface LoginFormProps {
-  onLogin: (phone: string) => void;
+  onLogin: (phone: string, userType: 'executor' | 'manager') => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [phone, setPhone] = useState('');
+  const [selectedUserType, setSelectedUserType] = useState<'executor' | 'manager'>('executor');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.trim()) {
-      onLogin(phone);
+      onLogin(phone, selectedUserType);
     }
   };
 
@@ -27,10 +28,34 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             <Phone className="w-6 h-6 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold">Вход в систему</CardTitle>
-          <p className="text-gray-600">Введите номер телефона</p>
+          <p className="text-gray-600">Выберите тип пользователя и введите номер телефона</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-700">Тип пользователя</label>
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  type="button"
+                  variant={selectedUserType === 'executor' ? 'default' : 'outline'}
+                  className="flex items-center justify-center space-x-2 h-12"
+                  onClick={() => setSelectedUserType('executor')}
+                >
+                  <User className="w-4 h-4" />
+                  <span>Исполнитель</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant={selectedUserType === 'manager' ? 'default' : 'outline'}
+                  className="flex items-center justify-center space-x-2 h-12"
+                  onClick={() => setSelectedUserType('manager')}
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Руководитель</span>
+                </Button>
+              </div>
+            </div>
+            
             <div>
               <Input
                 type="tel"
@@ -41,6 +66,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 className="w-full"
               />
             </div>
+            
             <Button type="submit" className="w-full">
               Войти
             </Button>
