@@ -24,14 +24,24 @@ const OrdersPage: React.FC = () => {
   const activeOrders = allOrders.filter(order => order.status !== 'completed');
   const completedOrders = allOrders.filter(order => order.status === 'completed');
 
-  const handleOrderUpdate = (orderId: string, updatedOrder: Order) => {
-    console.log('Order updated:', orderId, updatedOrder);
-    // Here you would update the order in your state management
+  const handleOrderComplete = (orderId: string) => {
+    console.log('Order completed:', orderId);
+    // Here you would update the order status to completed in your state management
+  };
+
+  const handleOrderEdit = (orderId: string) => {
+    console.log('Order edit:', orderId);
+    // Here you would open edit modal for the order
   };
 
   const handleOrderDelete = (orderId: string) => {
     console.log('Order deleted:', orderId);
     // Here you would delete the order from your state management
+  };
+
+  const handleGeneratePDF = (orderId: string) => {
+    console.log('Generate PDF for order:', orderId);
+    // Here you would generate PDF for the order
   };
 
   return (
@@ -56,8 +66,10 @@ const OrdersPage: React.FC = () => {
               </div>
               <OrderCard
                 order={order}
-                onUpdate={(updatedOrder) => handleOrderUpdate(order.id, updatedOrder)}
+                onComplete={() => handleOrderComplete(order.id)}
+                onEdit={() => handleOrderEdit(order.id)}
                 onDelete={() => handleOrderDelete(order.id)}
+                onGeneratePDF={() => handleGeneratePDF(order.id)}
               />
             </div>
           ))}
@@ -76,8 +88,10 @@ const OrdersPage: React.FC = () => {
               </div>
               <OrderCard
                 order={order}
-                onUpdate={(updatedOrder) => handleOrderUpdate(order.id, updatedOrder)}
+                onComplete={() => handleOrderComplete(order.id)}
+                onEdit={() => handleOrderEdit(order.id)}
                 onDelete={() => handleOrderDelete(order.id)}
+                onGeneratePDF={() => handleGeneratePDF(order.id)}
               />
             </div>
           ))}
