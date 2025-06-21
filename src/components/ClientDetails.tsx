@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import OrderCard from './OrderCard';
 import CreateOrderModal from './CreateOrderModal';
+import EditOrderModal from './EditOrderModal';
 import type { Client, Order } from '../types/types';
 
 interface ClientDetailsProps {
@@ -15,6 +16,7 @@ interface ClientDetailsProps {
 
 const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
   const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [orders, setOrders] = useState<Order[]>(client.orders);
 
   const handleCreateOrder = (newOrder: Omit<Order, 'id'>) => {
@@ -26,15 +28,48 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
     setShowCreateOrder(false);
   };
 
-  const handleCloseOrder = (orderId: string) => {
+  const handleEditOrder = (updatedOrder: Order) => {
+    setOrders(orders.map(order => 
+      order.id === updatedOrder.id ? updatedOrder : order
+    ));
+    setEditingOrder(null);
+  };
+
+  const handleDeleteOrder = (orderId: string) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот заказ?')) {
+      setOrders(orders.filter(order => order.id !== orderId));
+    }
+  };
+
+  const handleCompleteOrder = (orderId: string) => {
     setOrders(orders.map(order => 
       order.id === orderId 
-        ? { ...order, status: 'completed', completedAt: new Date().toISOString() }
+        ? { ...order, status: 'completed' as const, completedAt: new Date().toISOString() }
         : order
     ));
   };
 
-  const activeOrders = orders.filter(order => order.status === 'active');
+  const handleGeneratePDF = (orderId: string) => {
+    // Симуляция генерации PDF
+    const pdfId = `invoice-${Date.now()}`;
+    const pdfUrl = `https://example.com/invoices/${pdfId}.pdf`;
+    
+    setOrders(orders.map(order => 
+      order.id === orderId 
+        ? { 
+            ...order, 
+            status: 'invoiced' as const, 
+            invoicedAt: new Date().toISOString(),
+            pdfUrl,
+            pdfId
+          }
+        : order
+    ));
+    console.log(`PDF generated for order ${orderId}: ${pdfUrl}`);
+  };
+
+  const createdOrders = orders.filter(order => order.status === 'created');
+  const invoicedOrders = orders.filter(order => order.status === 'invoiced');
   const completedOrders = orders.filter(order => order.status === 'completed');
 
   return (
@@ -103,15 +138,35 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
             </Button>
           </div>
 
-          {/* Active Orders */}
-          {activeOrders.length > 0 && (
+          {/* Created Orders */}
+          {createdOrders.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">Активные заказы</h3>
-              {activeOrders.map((order) => (
+              <h3 className="text-lg font-medium text-gray-800">Созданные заказы</h3>
+              {createdOrders.map((order) => (
                 <OrderCard
                   key={order.id}
                   order={order}
-                  onClose={() => handleCloseOrder(order.id)}
+                  onComplete={() => handleCompleteOrder(order.id)}
+                  onEdit={() => setEditingOrder(order)}
+                  onDelete={() => handleDeleteOrder(order.id)}
+                  onGeneratePDF={() => handleGeneratePDF(order.id)}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Invoiced Orders */}
+          {invoicedOrders.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-gray-800">Выставленные счета</h3>
+              {invoicedOrders.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  onComplete={() => handleCompleteOrder(order.id)}
+                  onEdit={() => setEditingOrder(order)}
+                  onDelete={() => handleDeleteOrder(order.id)}
+                  onGeneratePDF={() => handleGeneratePDF(order.id)}
                 />
               ))}
             </div>
@@ -125,7 +180,10 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
                 <OrderCard
                   key={order.id}
                   order={order}
-                  onClose={() => handleCloseOrder(order.id)}
+                  onComplete={() => handleCompleteOrder(order.id)}
+                  onEdit={() => setEditingOrder(order)}
+                  onDelete={() => handleDeleteOrder(order.id)}
+                  onGeneratePDF={() => handleGeneratePDF(order.id)}
                 />
               ))}
             </div>
@@ -146,6 +204,15 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
         onClose={() => setShowCreateOrder(false)}
         onSubmit={handleCreateOrder}
       />
+
+      {editingOrder && (
+        <EditOrderModal
+          isOpen={!!editingOrder}
+          onClose={() => setEditingOrder(null)}
+          onSubmit={handleEditOrder}
+          order={editingOrder}
+        />
+      )}
     </div>
   );
 };

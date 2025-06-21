@@ -15,9 +15,12 @@ export interface Order {
   id: string;
   services: Service[];
   materials: (Material & { quantity: number })[];
-  status: 'active' | 'completed';
+  status: 'created' | 'invoiced' | 'completed';
   createdAt: string;
   completedAt?: string;
+  invoicedAt?: string;
+  pdfUrl?: string;
+  pdfId?: string;
 }
 
 export interface Client {
