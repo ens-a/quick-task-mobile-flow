@@ -3,26 +3,46 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Calendar, TrendingUp, FileText, DollarSign, Users } from 'lucide-react';
+import { TrendingUp, FileText, DollarSign, Users } from 'lucide-react';
 
 const AnalyticsPage: React.FC = () => {
-  const [dateRange, setDateRange] = useState('month');
+  const [dateRange, setDateRange] = useState('today');
   
-  // Mock data for today
-  const todayStats = {
-    orders: 5,
-    completedOrders: 3,
-    revenue: 25000,
-    activeExecutors: 8
+  // Mock data for different periods
+  const getStatsForPeriod = (period: string) => {
+    switch (period) {
+      case 'today':
+        return {
+          orders: 5,
+          completedOrders: 3,
+          revenue: 25000,
+          activeExecutors: 8
+        };
+      case 'week':
+        return {
+          orders: 25,
+          completedOrders: 18,
+          revenue: 95000,
+          activeExecutors: 10
+        };
+      case 'month':
+        return {
+          orders: 45,
+          completedOrders: 32,
+          revenue: 180000,
+          activeExecutors: 12
+        };
+      default:
+        return {
+          orders: 45,
+          completedOrders: 32,
+          revenue: 180000,
+          activeExecutors: 12
+        };
+    }
   };
-  
-  // Mock data for month
-  const monthStats = {
-    orders: 45,
-    completedOrders: 32,
-    revenue: 180000,
-    activeExecutors: 12
-  };
+
+  const currentStats = getStatsForPeriod(dateRange);
 
   const executorStats = [
     { name: 'Иван Петров', orders: 8, completed: 6, revenue: 45000 },
@@ -32,55 +52,6 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Today's Analytics */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Calendar className="w-5 h-5 mr-2" />
-          Аналитика за сегодня
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Заказы</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{todayStats.orders}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Закрыто заказов</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{todayStats.completedOrders}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Выручка</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{todayStats.revenue.toLocaleString()} ₽</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Активные исполнители</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{todayStats.activeExecutors}</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
       {/* Period Analytics */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -89,6 +60,13 @@ const AnalyticsPage: React.FC = () => {
             Аналитика за период
           </h3>
           <div className="flex space-x-2">
+            <Button
+              variant={dateRange === 'today' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setDateRange('today')}
+            >
+              Сегодня
+            </Button>
             <Button
               variant={dateRange === 'week' ? 'default' : 'outline'}
               size="sm"
@@ -122,14 +100,14 @@ const AnalyticsPage: React.FC = () => {
           </div>
         )}
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Всего заказов</CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{monthStats.orders}</div>
+              <div className="text-2xl font-bold">{currentStats.orders}</div>
             </CardContent>
           </Card>
           
@@ -139,7 +117,7 @@ const AnalyticsPage: React.FC = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{monthStats.completedOrders}</div>
+              <div className="text-2xl font-bold">{currentStats.completedOrders}</div>
             </CardContent>
           </Card>
           
@@ -149,17 +127,7 @@ const AnalyticsPage: React.FC = () => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{monthStats.revenue.toLocaleString()} ₽</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Всего исполнителей</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{monthStats.activeExecutors}</div>
+              <div className="text-2xl font-bold">{currentStats.revenue.toLocaleString()} ₽</div>
             </CardContent>
           </Card>
         </div>
