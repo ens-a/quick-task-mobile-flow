@@ -38,7 +38,7 @@ export const mockClients: Client[] = [
           { id: '1', name: 'Кабель Ethernet (1м)', price: 150, quantity: 3 },
           { id: '3', name: 'Крепежные элементы', price: 200, quantity: 1 }
         ],
-        status: 'active',
+        status: 'created',
         createdAt: '2024-06-01T10:00:00Z'
       }
     ]
