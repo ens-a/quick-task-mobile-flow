@@ -1,48 +1,42 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Filter } from 'lucide-react';
 import { mockClients } from '../../data/mockData';
 import OrderCard from '../OrderCard';
 import type { Order } from '../../types/types';
+import OrdersList from '../OrdersList';
+import { useOrderActions } from '../../hooks/useOrderActions';
+import EditOrderModal from '../EditOrderModal';
 
 const OrdersPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('active');
 
-  // Get all orders from all clients
-  const allOrders: (Order & { clientName: string; clientPhone: string })[] = [];
-  mockClients.forEach(client => {
-    client.orders.forEach(order => {
-      allOrders.push({
-        ...order,
-        clientName: client.name,
-        clientPhone: client.phone
+  // Get all orders from all clients and manage them in state
+  const [allOrders, setAllOrders] = useState<Order[]>(() => {
+    const orders: Order[] = [];
+    mockClients.forEach(client => {
+      client.orders.forEach(order => {
+        orders.push(order);
       });
     });
+    return orders;
+  });
+
+  const {
+    editingOrder,
+    handleCompleteOrder,
+    handleEditOrder,
+    handleDeleteOrder,
+    handleGeneratePDF,
+    handleUpdateOrder,
+    handleCancelEdit,
+  } = useOrderActions({
+    orders: allOrders,
+    onOrdersChange: setAllOrders,
   });
 
   const activeOrders = allOrders.filter(order => order.status !== 'completed');
   const completedOrders = allOrders.filter(order => order.status === 'completed');
-
-  const handleOrderComplete = (orderId: string) => {
-    console.log('Order completed:', orderId);
-    // Here you would update the order status to completed in your state management
-  };
-
-  const handleOrderEdit = (orderId: string) => {
-    console.log('Order edit:', orderId);
-    // Here you would open edit modal for the order
-  };
-
-  const handleOrderDelete = (orderId: string) => {
-    console.log('Order deleted:', orderId);
-    // Here you would delete the order from your state management
-  };
-
-  const handleGeneratePDF = (orderId: string) => {
-    console.log('Generate PDF for order:', orderId);
-    // Here you would generate PDF for the order
-  };
 
   return (
     <div className="space-y-6">
@@ -59,49 +53,36 @@ const OrdersPage: React.FC = () => {
         </TabsList>
 
         <TabsContent value="active" className="space-y-4">
-          {activeOrders.map((order) => (
-            <div key={order.id} className="space-y-2">
-              <div className="text-sm text-gray-600 font-medium">
-                {order.clientName} • {order.clientPhone}
-              </div>
-              <OrderCard
-                order={order}
-                onComplete={() => handleOrderComplete(order.id)}
-                onEdit={() => handleOrderEdit(order.id)}
-                onDelete={() => handleOrderDelete(order.id)}
-                onGeneratePDF={() => handleGeneratePDF(order.id)}
-              />
-            </div>
-          ))}
-          {activeOrders.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              Нет активных заказов
-            </div>
-          )}
+          <OrdersList
+            orders={activeOrders}
+            onComplete={handleCompleteOrder}
+            onEdit={handleEditOrder}
+            onDelete={handleDeleteOrder}
+            onGeneratePDF={handleGeneratePDF}
+            emptyText="Нет активных заказов"
+          />
         </TabsContent>
 
         <TabsContent value="completed" className="space-y-4">
-          {completedOrders.map((order) => (
-            <div key={order.id} className="space-y-2">
-              <div className="text-sm text-gray-600 font-medium">
-                {order.clientName} • {order.clientPhone}
-              </div>
-              <OrderCard
-                order={order}
-                onComplete={() => handleOrderComplete(order.id)}
-                onEdit={() => handleOrderEdit(order.id)}
-                onDelete={() => handleOrderDelete(order.id)}
-                onGeneratePDF={() => handleGeneratePDF(order.id)}
-              />
-            </div>
-          ))}
-          {completedOrders.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              Нет завершенных заказов
-            </div>
-          )}
+          <OrdersList
+            orders={completedOrders}
+            onComplete={handleCompleteOrder}
+            onEdit={handleEditOrder}
+            onDelete={handleDeleteOrder}
+            onGeneratePDF={handleGeneratePDF}
+            emptyText="Нет завершенных заказов"
+          />
         </TabsContent>
       </Tabs>
+
+      {editingOrder && (
+        <EditOrderModal
+          isOpen={!!editingOrder}
+          onClose={handleCancelEdit}
+          onSubmit={handleUpdateOrder}
+          order={editingOrder}
+        />
+      )}
     </div>
   );
 };
