@@ -1,9 +1,13 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, FileText, DollarSign, TrendingUp } from 'lucide-react';
 
-const DashboardPage: React.FC = () => {
+interface DashboardPageProps {
+  currentUser: string;
+  onLogout: () => void;
+}
+
+const DashboardPage: React.FC<DashboardPageProps> = ({ currentUser, onLogout }) => {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
