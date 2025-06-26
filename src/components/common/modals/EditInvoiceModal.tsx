@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Plus, Minus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -56,12 +56,14 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({ isOpen, onClose, on
     if (selectedServices.length === 0 && selectedMaterials.length === 0) {
       return;
     }
+
     const updatedInvoice: Invoice = {
       ...invoice,
       services: selectedServices,
       materials: selectedMaterials,
       status: 'created', // Сбрасываем статус на "Создан" после редактирования
       pdfUrl: undefined, // Удаляем PDF после редактирования
+
       pdfId: undefined
     };
     onSubmit(updatedInvoice);
