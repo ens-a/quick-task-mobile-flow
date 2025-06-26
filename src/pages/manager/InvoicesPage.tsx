@@ -12,13 +12,16 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { mockClients } from '../../data/mockData';
+import type { Invoice } from '../../types/types';
 
-interface Invoice {
+interface InvoiceWithClient {
   id: string;
   number: string;
   clientName: string;
+  clientId: string;
   amount: number;
-  status: 'issued' | 'closed' | 'paid';
+  status: 'created' | 'cancelled' | 'paid';
   createdAt: string;
   pdfUrl?: string;
 }
@@ -30,47 +33,27 @@ const InvoicesPage: React.FC = () => {
   const [dateTo, setDateTo] = useState<Date>();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Mock data
-  const invoices: Invoice[] = [
-    {
-      id: '1',
-      number: 'INV-2024-001',
-      clientName: 'ООО "Стройком"',
-      amount: 45000,
-      status: 'paid',
-      createdAt: '2024-01-15T10:30:00Z',
-      pdfUrl: 'https://example.com/invoices/inv-001.pdf'
-    },
-    {
-      id: '2',
-      number: 'INV-2024-002',
-      clientName: 'ИП Иванов А.А.',
-      amount: 28000,
-      status: 'issued',
-      createdAt: '2024-01-18T14:20:00Z',
-      pdfUrl: 'https://example.com/invoices/inv-002.pdf'
-    },
-    {
-      id: '3',
-      number: 'INV-2024-003',
-      clientName: 'ООО "РемСтрой"',
-      amount: 67000,
-      status: 'closed',
-      createdAt: '2024-01-20T09:15:00Z',
-      pdfUrl: 'https://example.com/invoices/inv-003.pdf'
-    },
-    {
-      id: '4',
-      number: 'INV-2024-004',
-      clientName: 'ЗАО "БизнесСтрой"',
-      amount: 152000,
-      status: 'paid',
-      createdAt: '2024-01-22T16:45:00Z',
-      pdfUrl: 'https://example.com/invoices/inv-004.pdf'
-    }
-  ];
+  // Собираем все счета из всех клиентов
+  const allInvoices: InvoiceWithClient[] = mockClients.flatMap(client => 
+    client.invoices.map(invoice => {
+      const totalAmount = 
+        invoice.services.reduce((sum, service) => sum + service.price, 0) +
+        invoice.materials.reduce((sum, material) => sum + material.price * material.quantity, 0);
+      
+      return {
+        id: invoice.id,
+        number: `INV-2024-${invoice.id.padStart(3, '0')}`,
+        clientName: client.name,
+        clientId: client.id,
+        amount: totalAmount,
+        status: invoice.status,
+        createdAt: invoice.createdAt,
+        pdfUrl: invoice.pdfUrl || `https://example.com/invoices/inv-${invoice.id}.pdf`
+      };
+    })
+  );
 
-  const filteredInvoices = invoices.filter(invoice => {
+  const filteredInvoices = allInvoices.filter(invoice => {
     const matchesSearch = 
       invoice.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       invoice.clientName.toLowerCase().includes(searchTerm.toLowerCase());
@@ -84,12 +67,12 @@ const InvoicesPage: React.FC = () => {
     return matchesSearch && matchesStatus && matchesDateFrom && matchesDateTo;
   });
 
-  const getStatusBadge = (status: Invoice['status']) => {
+  const getStatusBadge = (status: InvoiceWithClient['status']) => {
     switch (status) {
-      case 'issued':
-        return <Badge className="bg-yellow-100 text-yellow-800">Выставлен</Badge>;
-      case 'closed':
-        return <Badge className="bg-gray-100 text-gray-800">Закрыт</Badge>;
+      case 'created':
+        return <Badge className="bg-yellow-100 text-yellow-800">Создан</Badge>;
+      case 'cancelled':
+        return <Badge className="bg-gray-100 text-gray-800">Отменен</Badge>;
       case 'paid':
         return <Badge className="bg-green-100 text-green-800">Оплачен</Badge>;
       default:
@@ -146,8 +129,8 @@ const InvoicesPage: React.FC = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Все</SelectItem>
-                  <SelectItem value="issued">Выставлен</SelectItem>
-                  <SelectItem value="closed">Закрыт</SelectItem>
+                  <SelectItem value="created">Создан</SelectItem>
+                  <SelectItem value="cancelled">Отменен</SelectItem>
                   <SelectItem value="paid">Оплачен</SelectItem>
                 </SelectContent>
               </Select>
