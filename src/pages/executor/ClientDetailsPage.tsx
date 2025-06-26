@@ -66,16 +66,6 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
     ));
   };
 
-  const handleGeneratePDF = (invoiceId: string) => {
-    // Mock PDF generation
-    const mockPdfUrl = `https://example.com/invoices/${invoiceId}.pdf`;
-    setInvoices(invoices.map(inv => 
-      inv.id === invoiceId 
-        ? { ...inv, pdfUrl: mockPdfUrl, pdfId: `pdf_${invoiceId}` }
-        : inv
-    ));
-  };
-
   const createdInvoices = invoices.filter(invoice => invoice.status === 'created');
   const paidInvoices = invoices.filter(invoice => invoice.status === 'paid');
   const cancelledInvoices = invoices.filter(invoice => invoice.status === 'cancelled');
@@ -156,7 +146,6 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
                 onEdit={handleEditInvoice}
                 onDelete={handleDeleteInvoice}
                 onCancel={handleCancelInvoice}
-                onGeneratePDF={handleGeneratePDF}
                 emptyText="Нет созданных счетов"
               />
             </div>
