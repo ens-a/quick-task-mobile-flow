@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import InvoicesList from '@/components/common/InvoicesList';
-import CreateOrderModal from '@/components/common/modals/CreateOrderModal';
-import EditOrderModal from '@/components/common/modals/EditOrderModal';
+import CreateInvoiceModal from '@/components/common/modals/CreateInvoiceModal';
+import EditInvoiceModal from '@/components/common/modals/EditInvoiceModal';
 import type { Client, Invoice } from '../../types/types';
 
 interface ClientDetailsProps {
@@ -194,18 +194,18 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
         </div>
       </div>
 
-      <CreateOrderModal
+      <CreateInvoiceModal
         isOpen={showCreateInvoice}
         onClose={() => setShowCreateInvoice(false)}
         onSubmit={handleCreateInvoice}
       />
 
       {editingInvoice && (
-        <EditOrderModal
+        <EditInvoiceModal
           isOpen={!!editingInvoice}
           onClose={() => setEditingInvoice(null)}
           onSubmit={handleUpdateInvoice}
-          order={editingInvoice}
+          invoice={editingInvoice}
         />
       )}
     </div>
