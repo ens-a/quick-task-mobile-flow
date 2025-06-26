@@ -12,7 +12,6 @@ interface CreateInvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (invoice: Omit<Invoice, 'id' | 'createdAt' | 'status' | 'pdfUrl' | 'pdfId'>) => void;
-}
 
 const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
@@ -55,11 +54,13 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose
     if (selectedServices.length === 0 && selectedMaterials.length === 0) {
       return;
     }
+
     const invoiceData = {
       services: selectedServices,
       materials: selectedMaterials
     };
     onSubmit(invoiceData);
+
     setSelectedServices([]);
     setSelectedMaterials([]);
     setSearchTerm('');
