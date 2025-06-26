@@ -11,14 +11,14 @@ export interface Material {
   price: number;
 }
 
-export interface Order {
+export interface Invoice {
   id: string;
   services: Service[];
   materials: (Material & { quantity: number })[];
-  status: 'created' | 'invoiced' | 'completed';
+  status: 'created' | 'cancelled' | 'paid';
   createdAt: string;
-  completedAt?: string;
-  invoicedAt?: string;
+  cancelledAt?: string;
+  paidAt?: string;
   pdfUrl?: string;
   pdfId?: string;
 }
@@ -30,5 +30,5 @@ export interface Client {
   address: string;
   description: string;
   status: 'active' | 'completed';
-  orders: Order[];
+  invoices: Invoice[];
 }

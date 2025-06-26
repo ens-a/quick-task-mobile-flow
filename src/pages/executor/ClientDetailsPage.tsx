@@ -1,13 +1,13 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Phone, MapPin, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import OrdersList from '@/components/common/OrdersList';
+import InvoicesList from '@/components/common/InvoicesList';
 import CreateOrderModal from '@/components/common/modals/CreateOrderModal';
 import EditOrderModal from '@/components/common/modals/EditOrderModal';
-import { useOrderActions } from '../../hooks/useOrderActions';
-import type { Client, Order } from '../../types/types';
+import type { Client, Invoice } from '../../types/types';
 
 interface ClientDetailsProps {
   client: Client;
@@ -15,34 +15,70 @@ interface ClientDetailsProps {
 }
 
 const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
-  const [showCreateOrder, setShowCreateOrder] = useState(false);
-  const [orders, setOrders] = useState<Order[]>(client.orders);
+  const [showCreateInvoice, setShowCreateInvoice] = useState(false);
+  const [invoices, setInvoices] = useState<Invoice[]>(client.invoices);
+  const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
 
-  const {
-    editingOrder,
-    handleCompleteOrder,
-    handleEditOrder,
-    handleDeleteOrder,
-    handleGeneratePDF,
-    handleUpdateOrder,
-    handleCancelEdit,
-  } = useOrderActions({
-    orders,
-    onOrdersChange: setOrders,
-  });
-
-  const handleCreateOrder = (newOrder: Omit<Order, 'id'>) => {
-    const order: Order = {
-      ...newOrder,
+  const handleCreateInvoice = (newInvoiceData: any) => {
+    const invoice: Invoice = {
+      ...newInvoiceData,
       id: Date.now().toString(),
+      status: 'created' as const,
+      createdAt: new Date().toISOString(),
     };
-    setOrders([...orders, order]);
-    setShowCreateOrder(false);
+    setInvoices([...invoices, invoice]);
+    setShowCreateInvoice(false);
   };
 
-  const createdOrders = orders.filter(order => order.status === 'created');
-  const invoicedOrders = orders.filter(order => order.status === 'invoiced');
-  const completedOrders = orders.filter(order => order.status === 'completed');
+  const handleEditInvoice = (invoiceId: string) => {
+    const invoice = invoices.find(inv => inv.id === invoiceId);
+    if (invoice) {
+      setEditingInvoice(invoice);
+    }
+  };
+
+  const handleUpdateInvoice = (updatedInvoice: Invoice) => {
+    setInvoices(invoices.map(inv => 
+      inv.id === updatedInvoice.id ? updatedInvoice : inv
+    ));
+    setEditingInvoice(null);
+  };
+
+  const handleDeleteInvoice = (invoiceId: string) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот счет?')) {
+      setInvoices(invoices.filter(inv => inv.id !== invoiceId));
+    }
+  };
+
+  const handlePayInvoice = (invoiceId: string) => {
+    setInvoices(invoices.map(inv => 
+      inv.id === invoiceId 
+        ? { ...inv, status: 'paid' as const, paidAt: new Date().toISOString() }
+        : inv
+    ));
+  };
+
+  const handleCancelInvoice = (invoiceId: string) => {
+    setInvoices(invoices.map(inv => 
+      inv.id === invoiceId 
+        ? { ...inv, status: 'cancelled' as const, cancelledAt: new Date().toISOString() }
+        : inv
+    ));
+  };
+
+  const handleGeneratePDF = (invoiceId: string) => {
+    // Mock PDF generation
+    const mockPdfUrl = `https://example.com/invoices/${invoiceId}.pdf`;
+    setInvoices(invoices.map(inv => 
+      inv.id === invoiceId 
+        ? { ...inv, pdfUrl: mockPdfUrl, pdfId: `pdf_${invoiceId}` }
+        : inv
+    ));
+  };
+
+  const createdInvoices = invoices.filter(invoice => invoice.status === 'created');
+  const paidInvoices = invoices.filter(invoice => invoice.status === 'paid');
+  const cancelledInvoices = invoices.filter(invoice => invoice.status === 'cancelled');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -96,87 +132,80 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
           </CardContent>
         </Card>
 
-        {/* Orders Section */}
+        {/* Invoices Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-800">Заказы</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Счета</h2>
             <Button 
-              onClick={() => setShowCreateOrder(true)}
+              onClick={() => setShowCreateInvoice(true)}
               className="bg-blue-600 hover:bg-blue-700"
               size="sm"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Создать заказ
+              Создать счет
             </Button>
           </div>
 
-          {/* Created Orders */}
-          {createdOrders.length > 0 && (
+          {/* Created Invoices */}
+          {createdInvoices.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">Созданные заказы</h3>
-              <OrdersList
-                orders={createdOrders}
-                onComplete={handleCompleteOrder}
-                onEdit={handleEditOrder}
-                onDelete={handleDeleteOrder}
+              <h3 className="text-lg font-medium text-gray-800">Созданные счета</h3>
+              <InvoicesList
+                invoices={createdInvoices}
+                onPay={handlePayInvoice}
+                onEdit={handleEditInvoice}
+                onDelete={handleDeleteInvoice}
+                onCancel={handleCancelInvoice}
                 onGeneratePDF={handleGeneratePDF}
-                emptyText="Нет созданных заказов"
+                emptyText="Нет созданных счетов"
               />
             </div>
           )}
 
-          {/* Invoiced Orders */}
-          {invoicedOrders.length > 0 && (
+          {/* Paid Invoices */}
+          {paidInvoices.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">Выставленные счета</h3>
-              <OrdersList
-                orders={invoicedOrders}
-                onComplete={handleCompleteOrder}
-                onEdit={handleEditOrder}
-                onDelete={handleDeleteOrder}
-                onGeneratePDF={handleGeneratePDF}
-                emptyText="Нет выставленных счетов"
+              <h3 className="text-lg font-medium text-gray-800">Оплаченные счета</h3>
+              <InvoicesList
+                invoices={paidInvoices}
+                emptyText="Нет оплаченных счетов"
               />
             </div>
           )}
 
-          {/* Completed Orders */}
-          {completedOrders.length > 0 && (
+          {/* Cancelled Invoices */}
+          {cancelledInvoices.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-800">Завершенные заказы</h3>
-              <OrdersList
-                orders={completedOrders}
-                onComplete={handleCompleteOrder}
-                onEdit={handleEditOrder}
-                onDelete={handleDeleteOrder}
-                onGeneratePDF={handleGeneratePDF}
-                emptyText="Нет завершённых заказов"
+              <h3 className="text-lg font-medium text-gray-800">Отмененные счета</h3>
+              <InvoicesList
+                invoices={cancelledInvoices}
+                emptyText="Нет отмененных счетов"
               />
             </div>
           )}
 
-          {orders.length === 0 && (
+          {invoices.length === 0 && (
             <div className="text-center py-8 text-gray-500">
               <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>Заказов пока нет</p>
-              <p className="text-sm">Создайте первый заказ для этого клиента</p>
+              <p>Счетов пока нет</p>
+              <p className="text-sm">Создайте первый счет для этого клиента</p>
             </div>
           )}
         </div>
       </div>
 
       <CreateOrderModal
-        isOpen={showCreateOrder}
-        onClose={() => setShowCreateOrder(false)}
-        onSubmit={handleCreateOrder}
+        isOpen={showCreateInvoice}
+        onClose={() => setShowCreateInvoice(false)}
+        onSubmit={handleCreateInvoice}
       />
 
-      {editingOrder && (
+      {editingInvoice && (
         <EditOrderModal
-          isOpen={!!editingOrder}
-          onClose={handleCancelEdit}
-          onSubmit={handleUpdateOrder}
-          order={editingOrder}
+          isOpen={!!editingInvoice}
+          onClose={() => setEditingInvoice(null)}
+          onSubmit={handleUpdateInvoice}
+          order={editingInvoice}
         />
       )}
     </div>

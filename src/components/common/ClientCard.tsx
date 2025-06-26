@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin, Phone, FileText, ChevronRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,12 +49,12 @@ const ClientCard: React.FC<ClientCardProps> = ({ client, onClick }) => {
           </div>
         </div>
 
-        {client.orders.length > 0 && (
+        {client.invoices.length > 0 && (
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="text-xs text-gray-500">
-              Заказов: {client.orders.length} 
-              {client.orders.filter(order => order.status !== 'completed').length > 0 && 
-                ` (${client.orders.filter(order => order.status !== 'completed').length} активных)`
+              Счетов: {client.invoices.length} 
+              {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
+                ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
               }
             </div>
           </div>

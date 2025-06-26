@@ -55,7 +55,7 @@ const ClientsPage: React.FC = () => {
       address: newClient.address.trim(),
       description: newClient.description.trim(),
       status: 'active',
-      orders: []
+      invoices: []
     };
 
     // Добавление клиента в список
@@ -187,11 +187,11 @@ const ClientsPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {client.orders.length > 0 && (
+                  {client.invoices.length > 0 && (
                     <div className="text-xs text-gray-500 border-t pt-3">
-                      Заказов: {client.orders.length} 
-                      {client.orders.filter(order => order.status !== 'completed').length > 0 && 
-                        ` (${client.orders.filter(order => order.status !== 'completed').length} активных)`
+                      Счетов: {client.invoices.length} 
+                      {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
+                        ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
                       }
                     </div>
                   )}

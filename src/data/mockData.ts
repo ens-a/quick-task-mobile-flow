@@ -27,7 +27,7 @@ export const mockClients: Client[] = [
     address: 'г. Москва, ул. Ленина, д. 15, кв. 42',
     description: 'Требуется установка и настройка домашней сети Wi-Fi. Проблемы с подключением в дальних комнатах.',
     status: 'active',
-    orders: [
+    invoices: [
       {
         id: '1',
         services: [
@@ -50,7 +50,7 @@ export const mockClients: Client[] = [
     address: 'г. Москва, пр. Мира, д. 28, офис 15',
     description: 'Необходимо настроить корпоративную сеть на 10 рабочих мест. Требуется подключение принтера.',
     status: 'active',
-    orders: []
+    invoices: []
   },
   {
     id: '3',
@@ -59,7 +59,7 @@ export const mockClients: Client[] = [
     address: 'г. Москва, ул. Гагарина, д. 7, кв. 89',
     description: 'Модернизация домашней сети, установка системы умного дома.',
     status: 'completed',
-    orders: [
+    invoices: [
       {
         id: '2',
         services: [
@@ -70,9 +70,9 @@ export const mockClients: Client[] = [
           { id: '1', name: 'Кабель Ethernet (1м)', price: 150, quantity: 5 },
           { id: '6', name: 'Монтажная коробка', price: 300, quantity: 2 }
         ],
-        status: 'completed',
+        status: 'paid',
         createdAt: '2024-05-15T14:30:00Z',
-        completedAt: '2024-05-20T16:45:00Z'
+        paidAt: '2024-05-20T16:45:00Z'
       }
     ]
   },
@@ -83,6 +83,6 @@ export const mockClients: Client[] = [
     address: 'г. Москва, ул. Пушкина, д. 12, кв. 5',
     description: 'Проблемы с интернет-соединением, нужна диагностика и устранение неполадок.',
     status: 'active',
-    orders: []
+    invoices: []
   }
 ];

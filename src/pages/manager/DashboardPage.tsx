@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { LogOut, BarChart3, FileText, Users, UserCheck, Package, Receipt } from 'lucide-react';
+import { LogOut, BarChart3, Users, UserCheck, Package, Receipt } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/sidebar';
 import { SidebarInset } from '@/components/ui/sidebar';
 import AnalyticsPage from './AnalyticsPage';
-import OrdersPage from './OrdersPage';
 import ExecutorsPage from './ExecutorsPage';
 import ClientsPage from './ClientsPage';
 import CatalogPage from './CatalogPage';
@@ -29,7 +29,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onLogout }
 
   const menuItems = [
     { id: 'analytics', title: 'Аналитика', icon: BarChart3 },
-    { id: 'orders', title: 'Заказы', icon: FileText },
     { id: 'executors', title: 'Исполнители', icon: UserCheck },
     { id: 'clients', title: 'Клиенты', icon: Users },
     { id: 'catalog', title: 'Каталог', icon: Package },
@@ -40,8 +39,6 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onLogout }
     switch (activeTab) {
       case 'analytics':
         return <AnalyticsPage />;
-      case 'orders':
-        return <OrdersPage />;
       case 'executors':
         return <ExecutorsPage />;
       case 'clients':
