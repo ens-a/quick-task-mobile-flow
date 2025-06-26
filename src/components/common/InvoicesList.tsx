@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Invoice } from '../../types/types';
 import InvoiceCard from './InvoiceCard';
@@ -9,7 +8,6 @@ interface InvoicesListProps {
   onDelete?: (invoiceId: string) => void;
   onPay?: (invoiceId: string) => void;
   onCancel?: (invoiceId: string) => void;
-  onGeneratePDF?: (invoiceId: string) => void;
   emptyText?: string;
 }
 
@@ -19,7 +17,6 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
   onDelete,
   onPay,
   onCancel,
-  onGeneratePDF,
   emptyText = 'Нет счетов',
 }) => {
   if (!invoices.length) {
@@ -40,7 +37,6 @@ const InvoicesList: React.FC<InvoicesListProps> = ({
           onDelete={onDelete ? () => onDelete(invoice.id) : undefined}
           onPay={onPay ? () => onPay(invoice.id) : undefined}
           onCancel={onCancel ? () => onCancel(invoice.id) : undefined}
-          onGeneratePDF={onGeneratePDF ? () => onGeneratePDF(invoice.id) : undefined}
         />
       ))}
     </div>

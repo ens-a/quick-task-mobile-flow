@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,29 +12,29 @@ const AnalyticsPage: React.FC = () => {
     switch (period) {
       case 'today':
         return {
-          orders: 5,
-          completedOrders: 3,
+          invoices: 5,
+          paidInvoices: 3,
           revenue: 25000,
           activeExecutors: 8
         };
       case 'week':
         return {
-          orders: 25,
-          completedOrders: 18,
+          invoices: 25,
+          paidInvoices: 18,
           revenue: 95000,
           activeExecutors: 10
         };
       case 'month':
         return {
-          orders: 45,
-          completedOrders: 32,
+          invoices: 45,
+          paidInvoices: 32,
           revenue: 180000,
           activeExecutors: 12
         };
       default:
         return {
-          orders: 45,
-          completedOrders: 32,
+          invoices: 45,
+          paidInvoices: 32,
           revenue: 180000,
           activeExecutors: 12
         };
@@ -45,9 +44,9 @@ const AnalyticsPage: React.FC = () => {
   const currentStats = getStatsForPeriod(dateRange);
 
   const executorStats = [
-    { name: 'Иван Петров', orders: 8, completed: 6, revenue: 45000 },
-    { name: 'Мария Сидорова', orders: 6, completed: 5, revenue: 38000 },
-    { name: 'Алексей Козлов', orders: 7, completed: 4, revenue: 32000 },
+    { name: 'Иван Петров', invoices: 8, paid: 6, revenue: 45000 },
+    { name: 'Мария Сидорова', invoices: 6, paid: 5, revenue: 38000 },
+    { name: 'Алексей Козлов', invoices: 7, paid: 4, revenue: 32000 },
   ];
 
   return (
@@ -107,7 +106,7 @@ const AnalyticsPage: React.FC = () => {
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{currentStats.orders}</div>
+              <div className="text-2xl font-bold">{currentStats.invoices}</div>
             </CardContent>
           </Card>
           
@@ -117,7 +116,7 @@ const AnalyticsPage: React.FC = () => {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{currentStats.completedOrders}</div>
+              <div className="text-2xl font-bold">{currentStats.paidInvoices}</div>
             </CardContent>
           </Card>
           
@@ -147,11 +146,11 @@ const AnalyticsPage: React.FC = () => {
                 </div>
                 <div className="flex space-x-6 text-sm">
                   <div className="text-center">
-                    <div className="font-semibold">{executor.orders}</div>
+                    <div className="font-semibold">{executor.invoices}</div>
                     <div className="text-gray-500">Заказов</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-semibold">{executor.completed}</div>
+                    <div className="font-semibold">{executor.paid}</div>
                     <div className="text-gray-500">Закрыто</div>
                   </div>
                   <div className="text-center">

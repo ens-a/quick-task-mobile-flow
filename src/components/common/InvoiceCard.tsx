@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, Package, Wrench, Check, Edit, Trash2, FileText, Link, Copy, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +11,6 @@ interface InvoiceCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
   onCancel?: () => void;
-  onGeneratePDF?: () => void;
 }
 
 const InvoiceCard: React.FC<InvoiceCardProps> = ({ 
@@ -20,8 +18,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
   onPay, 
   onEdit, 
   onDelete, 
-  onCancel,
-  onGeneratePDF 
+  onCancel
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('ru-RU', {
@@ -117,14 +114,6 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
                   disabled={!onDelete}
                 >
                   <Trash2 className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={onGeneratePDF}
-                  size="sm"
-                  className="bg-purple-600 hover:bg-purple-700 h-8"
-                  disabled={!onGeneratePDF}
-                >
-                  <FileText className="w-4 h-4" />
                 </Button>
                 <Button
                   onClick={onPay}

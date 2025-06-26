@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Minus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -6,17 +6,18 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { availableServices, availableMaterials } from '../../../data/mockData';
-import type { Order, Service, Material } from '../../../types/types';
+import type { Invoice, Service, Material } from '../../../types/types';
 
-interface CreateOrderModalProps {
+interface EditInvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (order: Omit<Order, 'id'>) => void;
+  onSubmit: (invoice: Invoice) => void;
+  invoice: Invoice;
 }
 
-const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose, onSubmit }) => {
-  const [selectedServices, setSelectedServices] = useState<Service[]>([]);
-  const [selectedMaterials, setSelectedMaterials] = useState<(Material & { quantity: number })[]>([]);
+const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({ isOpen, onClose, onSubmit, invoice }) => {
+  const [selectedServices, setSelectedServices] = useState<Service[]>(invoice.services);
+  const [selectedMaterials, setSelectedMaterials] = useState<(Material & { quantity: number })[]>(invoice.materials);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredServices = availableServices.filter(service =>
@@ -55,18 +56,16 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose, on
     if (selectedServices.length === 0 && selectedMaterials.length === 0) {
       return;
     }
-
-    const order: Omit<Order, 'id'> = {
+    const updatedInvoice: Invoice = {
+      ...invoice,
       services: selectedServices,
       materials: selectedMaterials,
-      status: 'created',
-      createdAt: new Date().toISOString(),
+      status: 'created', // Сбрасываем статус на "Создан" после редактирования
+      pdfUrl: undefined, // Удаляем PDF после редактирования
+      pdfId: undefined
     };
-
-    onSubmit(order);
-    setSelectedServices([]);
-    setSelectedMaterials([]);
-    setSearchTerm('');
+    onSubmit(updatedInvoice);
+    onClose();
   };
 
   const totalCost = selectedServices.reduce((sum, service) => sum + service.price, 0) +
@@ -77,7 +76,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose, on
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            Создать заказ
+            Редактировать счет
           </DialogTitle>
         </DialogHeader>
 
@@ -177,7 +176,7 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose, on
               disabled={selectedServices.length === 0 && selectedMaterials.length === 0}
               className="w-full bg-blue-600 hover:bg-blue-700"
             >
-              Создать заказ
+              Сохранить изменения
             </Button>
           </div>
         </div>
@@ -186,4 +185,4 @@ const CreateOrderModal: React.FC<CreateOrderModalProps> = ({ isOpen, onClose, on
   );
 };
 
-export default CreateOrderModal;
+export default EditInvoiceModal;
