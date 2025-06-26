@@ -39,9 +39,7 @@ export const mockClients: Client[] = [
           { id: '3', name: 'Крепежные элементы', price: 200, quantity: 1 }
         ],
         status: 'created',
-        createdAt: '2024-06-01T10:00:00Z',
-        pdfUrl: 'https://example.com/invoice-1.pdf',
-        pdfId: '1'
+        createdAt: '2024-06-01T10:00:00Z'
       }
     ]
   },
@@ -74,9 +72,7 @@ export const mockClients: Client[] = [
         ],
         status: 'paid',
         createdAt: '2024-05-15T14:30:00Z',
-        paidAt: '2024-05-20T16:45:00Z',
-        pdfUrl: 'https://example.com/invoice-2.pdf',
-        pdfId: '2'
+        paidAt: '2024-05-20T16:45:00Z'
       }
     ]
   },

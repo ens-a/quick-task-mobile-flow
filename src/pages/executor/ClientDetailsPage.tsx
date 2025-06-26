@@ -1,15 +1,13 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Plus, Phone, MapPin, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import InvoicesList from '@/components/common/InvoicesList';
-import type { Client, Invoice } from '../../types/types';
-import { availableServices, availableMaterials } from '../../data/mockData';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import CreateInvoiceModal from '@/components/common/modals/CreateInvoiceModal';
 import EditInvoiceModal from '@/components/common/modals/EditInvoiceModal';
+import type { Client, Invoice } from '../../types/types';
 
 interface ClientDetailsProps {
   client: Client;
@@ -22,14 +20,11 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
   const [editingInvoice, setEditingInvoice] = useState<Invoice | null>(null);
 
   const handleCreateInvoice = (newInvoiceData: any) => {
-    const invoiceId = Date.now().toString();
     const invoice: Invoice = {
       ...newInvoiceData,
-      id: invoiceId,
+      id: Date.now().toString(),
       status: 'created' as const,
       createdAt: new Date().toISOString(),
-      pdfUrl: `https://example.com/invoices/${invoiceId}.pdf`,
-      pdfId: `pdf_${invoiceId}`
     };
     setInvoices([...invoices, invoice]);
     setShowCreateInvoice(false);
@@ -67,6 +62,16 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
     setInvoices(invoices.map(inv => 
       inv.id === invoiceId 
         ? { ...inv, status: 'cancelled' as const, cancelledAt: new Date().toISOString() }
+        : inv
+    ));
+  };
+
+  const handleGeneratePDF = (invoiceId: string) => {
+    // Mock PDF generation
+    const mockPdfUrl = `https://example.com/invoices/${invoiceId}.pdf`;
+    setInvoices(invoices.map(inv => 
+      inv.id === invoiceId 
+        ? { ...inv, pdfUrl: mockPdfUrl, pdfId: `pdf_${invoiceId}` }
         : inv
     ));
   };
@@ -151,6 +156,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
                 onEdit={handleEditInvoice}
                 onDelete={handleDeleteInvoice}
                 onCancel={handleCancelInvoice}
+                onGeneratePDF={handleGeneratePDF}
                 emptyText="Нет созданных счетов"
               />
             </div>
