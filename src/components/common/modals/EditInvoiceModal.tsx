@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Minus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -64,9 +63,9 @@ const EditInvoiceModal: React.FC<EditInvoiceModalProps> = ({ isOpen, onClose, on
       materials: selectedMaterials,
       status: 'created', // Сбрасываем статус на "Создан" после редактирования
       pdfUrl: undefined, // Удаляем PDF после редактирования
-      pdfId: undefined,
-    };
 
+      pdfId: undefined
+    };
     onSubmit(updatedInvoice);
     onClose();
   };

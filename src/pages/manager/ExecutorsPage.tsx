@@ -10,7 +10,6 @@ interface Executor {
   name: string;
   phone: string;
   email: string;
-  activeOrders: number;
 }
 
 const ExecutorsPage: React.FC = () => {
@@ -26,21 +25,18 @@ const ExecutorsPage: React.FC = () => {
       name: 'Иван Петров',
       phone: '+7 (999) 123-45-67',
       email: 'ivan@example.com',
-      activeOrders: 3
     },
     {
       id: '2',
       name: 'Мария Сидорова',
       phone: '+7 (999) 123-45-68',
       email: 'maria@example.com',
-      activeOrders: 2
     },
     {
       id: '3',
       name: 'Алексей Козлов',
       phone: '+7 (999) 123-45-69',
       email: 'alexey@example.com',
-      activeOrders: 4
     }
   ]);
 
@@ -77,7 +73,6 @@ const ExecutorsPage: React.FC = () => {
       name: newExecutor.name.trim(),
       phone: newExecutor.phone.trim(),
       email: newExecutor.email.trim(),
-      activeOrders: 0
     };
 
     // Добавление исполнителя в список
@@ -188,13 +183,6 @@ const ExecutorsPage: React.FC = () => {
                         </span>
                         <span>{executor.email}</span>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2 text-sm text-gray-600">
-                      <ClipboardList className="w-4 h-4" />
-                      <span>Клиентов в работе: <span className="font-semibold text-blue-600">{executor.activeOrders}</span></span>
                     </div>
                   </div>
                 </div>

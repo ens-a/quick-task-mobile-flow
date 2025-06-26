@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Plus, Minus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,8 +11,7 @@ import type { Invoice, Service, Material } from '../../../types/types';
 interface CreateInvoiceModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (invoice: Omit<Invoice, 'id'>) => void;
-}
+  onSubmit: (invoice: Omit<Invoice, 'id' | 'createdAt' | 'status' | 'pdfUrl' | 'pdfId'>) => void;
 
 const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose, onSubmit }) => {
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
@@ -52,26 +50,17 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose
     ));
   };
 
-  const generatePDFUrl = () => {
-    // Симуляция генерации PDF URL
-    const timestamp = Date.now();
-    return `https://example.com/invoices/invoice_${timestamp}.pdf`;
-  };
-
   const handleSubmit = () => {
     if (selectedServices.length === 0 && selectedMaterials.length === 0) {
       return;
     }
 
-    const invoice: Omit<Invoice, 'id'> = {
+    const invoiceData = {
       services: selectedServices,
-      materials: selectedMaterials,
-      status: 'created',
-      createdAt: new Date().toISOString(),
-      pdfUrl: generatePDFUrl(), // Автоматически генерируем PDF URL
+      materials: selectedMaterials
     };
+    onSubmit(invoiceData);
 
-    onSubmit(invoice);
     setSelectedServices([]);
     setSelectedMaterials([]);
     setSearchTerm('');
