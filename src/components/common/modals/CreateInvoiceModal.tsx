@@ -52,6 +52,12 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose
     ));
   };
 
+  const generatePDFUrl = () => {
+    // Симуляция генерации PDF URL
+    const timestamp = Date.now();
+    return `https://example.com/invoices/invoice_${timestamp}.pdf`;
+  };
+
   const handleSubmit = () => {
     if (selectedServices.length === 0 && selectedMaterials.length === 0) {
       return;
@@ -62,6 +68,7 @@ const CreateInvoiceModal: React.FC<CreateInvoiceModalProps> = ({ isOpen, onClose
       materials: selectedMaterials,
       status: 'created',
       createdAt: new Date().toISOString(),
+      pdfUrl: generatePDFUrl(), // Автоматически генерируем PDF URL
     };
 
     onSubmit(invoice);
