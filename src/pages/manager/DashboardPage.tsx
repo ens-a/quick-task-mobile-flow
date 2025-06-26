@@ -1,117 +1,116 @@
 
-import React, { useState } from 'react';
-import { LogOut, BarChart3, Users, UserCheck, Package, Receipt } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { SidebarInset } from '@/components/ui/sidebar';
-import AnalyticsPage from './AnalyticsPage';
-import ExecutorsPage from './ExecutorsPage';
-import ClientsPage from './ClientsPage';
-import CatalogPage from './CatalogPage';
-import InvoicesPage from './InvoicesPage';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, FileText, DollarSign, TrendingUp } from 'lucide-react';
 
-interface AdminDashboardProps {
-  currentUser: string;
-  onLogout: () => void;
-}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ currentUser, onLogout }) => {
-  const [activeTab, setActiveTab] = useState('analytics');
-
-  const menuItems = [
-    { id: 'analytics', title: 'Аналитика', icon: BarChart3 },
-    { id: 'executors', title: 'Исполнители', icon: UserCheck },
-    { id: 'clients', title: 'Клиенты', icon: Users },
-    { id: 'catalog', title: 'Каталог', icon: Package },
-    { id: 'invoices', title: 'Счета', icon: Receipt },
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'analytics':
-        return <AnalyticsPage />;
-      case 'executors':
-        return <ExecutorsPage />;
-      case 'clients':
-        return <ClientsPage />;
-      case 'catalog':
-        return <CatalogPage />;
-      case 'invoices':
-        return <InvoicesPage />;
-      default:
-        return <AnalyticsPage />;
-    }
-  };
-
+const DashboardPage: React.FC = () => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <Sidebar>
-          <SidebarHeader className="p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-800">Панель управления</h1>
-                <p className="text-sm text-gray-500">{currentUser}</p>
-              </div>
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton
-                    onClick={() => setActiveTab(item.id)}
-                    isActive={activeTab === item.id}
-                    className="w-full justify-start"
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-          <div className="p-4 mt-auto">
-            <Button 
-              variant="ghost" 
-              onClick={onLogout}
-              className="w-full justify-start text-gray-600 hover:text-gray-800"
-            >
-              <LogOut className="w-5 h-5 mr-2" />
-              Выйти
-            </Button>
-          </div>
-        </Sidebar>
-        
-        <SidebarInset>
-          <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-            <div className="px-4 py-3 flex items-center">
-              <SidebarTrigger />
-              <h2 className="ml-4 text-xl font-semibold text-gray-800">
-                {menuItems.find(item => item.id === activeTab)?.title}
-              </h2>
-            </div>
-          </header>
-          
-          <main className="flex-1 p-6">
-            {renderContent()}
-          </main>
-        </SidebarInset>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Всего клиентов</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground">+2 с прошлого месяца</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Счета</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-muted-foreground">+12 с прошлой недели</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Выручка</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₽245,600</div>
+            <p className="text-xs text-muted-foreground">+18% с прошлого месяца</p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Рост</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">+12.5%</div>
+            <p className="text-xs text-muted-foreground">+2.1% с прошлой недели</p>
+          </CardContent>
+        </Card>
       </div>
-    </SidebarProvider>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Последние действия</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Новый счет создан</p>
+                  <p className="text-xs text-gray-500">Клиент: Иван Петров</p>
+                </div>
+                <span className="text-xs text-gray-500">2 мин назад</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Счет оплачен</p>
+                  <p className="text-xs text-gray-500">Клиент: Мария Сидорова</p>
+                </div>
+                <span className="text-xs text-gray-500">15 мин назад</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium">Новый клиент добавлен</p>
+                  <p className="text-xs text-gray-500">Елена Васильева</p>
+                </div>
+                <span className="text-xs text-gray-500">1 час назад</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Статистика счетов</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Созданные</span>
+                <span className="font-medium">45</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Оплаченные</span>
+                <span className="font-medium">38</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600">Отмененные</span>
+                <span className="font-medium">7</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 
-export default AdminDashboard;
+export default DashboardPage;
