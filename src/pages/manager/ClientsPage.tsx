@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Phone, MapPin, FileText, Edit, Trash2 } from 'lucide-react';
+import { Plus, Search, Phone, MapPin, FileText, Edit, Trash2, Filter } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ClientCard from '@/components/common/ClientCard';
+import ClientDetailsPage from '@/pages/executor/ClientDetailsPage';
 import { mockClients } from '../../data/mockData';
 import type { Client } from '../../types/types';
 
@@ -13,26 +16,23 @@ const ClientsPage: React.FC = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
-  
-  // Состояние для клиентов
   const [clients, setClients] = useState<Client[]>(mockClients);
-  
-  // Состояние для формы создания клиента
   const [newClient, setNewClient] = useState({
     name: '',
     phone: '',
     address: '',
     description: ''
   });
-
-  // Состояние для формы редактирования клиента
   const [editClient, setEditClient] = useState({
     name: '',
     phone: '',
     address: '',
     description: ''
   });
+  const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active');
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
 
+  // Фильтрация клиентов по поиску
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     client.phone.includes(searchTerm) ||
@@ -40,14 +40,16 @@ const ClientsPage: React.FC = () => {
     client.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Разделение клиентов по статусу
+  const activeClients = filteredClients.filter(client => client.status === 'active');
+  const completedClients = filteredClients.filter(client => client.status === 'completed');
+
+  // --- CRUD Клиентов (оставляю как было) ---
   const handleCreateClient = () => {
-    // Валидация
     if (!newClient.name.trim() || !newClient.phone.trim() || !newClient.address.trim()) {
       alert('Пожалуйста, заполните все обязательные поля');
       return;
     }
-
-    // Создание нового клиента
     const client: Client = {
       id: Date.now().toString(),
       name: newClient.name.trim(),
@@ -57,22 +59,10 @@ const ClientsPage: React.FC = () => {
       status: 'active',
       invoices: []
     };
-
-    // Добавление клиента в список
     setClients([...clients, client]);
-    
-    // Очистка формы
-    setNewClient({
-      name: '',
-      phone: '',
-      address: '',
-      description: ''
-    });
-    
-    // Закрытие модального окна
+    setNewClient({ name: '', phone: '', address: '', description: '' });
     setIsCreateModalOpen(false);
   };
-
   const handleEditClient = (client: Client) => {
     setEditingClient(client);
     setEditClient({
@@ -83,7 +73,6 @@ const ClientsPage: React.FC = () => {
     });
     setIsEditModalOpen(true);
   };
-
   const handleSaveEdit = () => {
     if (!editingClient) return;
 
@@ -101,130 +90,125 @@ const ClientsPage: React.FC = () => {
       address: editClient.address.trim(),
       description: editClient.description.trim()
     };
-
-    // Обновление списка клиентов
-    setClients(clients.map(client => 
-      client.id === editingClient.id ? updatedClient : client
-    ));
-
-    // Закрытие модального окна
+    setClients(clients.map(client => client.id === editingClient.id ? updatedClient : client));
     setIsEditModalOpen(false);
     setEditingClient(null);
   };
-
   const handleDeleteClient = (clientId: string) => {
     if (window.confirm('Вы уверены, что хотите удалить этого клиента?')) {
       setClients(clients.filter(client => client.id !== clientId));
     }
   };
-
   const handleInputChange = (field: keyof typeof newClient, value: string) => {
-    setNewClient(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setNewClient(prev => ({ ...prev, [field]: value }));
+  };
+  const handleEditInputChange = (field: keyof typeof editClient, value: string) => {
+    setEditClient(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleEditInputChange = (field: keyof typeof editClient, value: string) => {
-    setEditClient(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  // --- Детали клиента ---
+  if (selectedClient) {
+    return (
+      <ClientDetailsPage 
+        client={selectedClient}
+        onBack={() => setSelectedClient(null)}
+      />
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Поиск клиентов..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+    <div className="min-h-screen bg-gray-50">
+      <div className="p-4">
+        <div className="flex items-center justify-between mb-6">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Поиск клиентов..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button onClick={() => setIsCreateModalOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Добавить клиента
+          </Button>
         </div>
-        <Button onClick={() => setIsCreateModalOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Добавить клиента
-        </Button>
-      </div>
-
-      <div className="grid gap-4">
-        {filteredClients.map((client) => (
-          <Card key={client.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-800 mb-1">
-                        {client.name}
-                      </h3>
-                      <Badge 
-                        variant={client.status === 'active' ? 'default' : 'secondary'}
-                        className={client.status === 'active' ? 'bg-green-100 text-green-800' : ''}
-                      >
-                        {client.status === 'active' ? 'Активный' : 'Завершен'}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span>{client.address}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span>{client.phone}</span>
-                    </div>
-                    
-                    <div className="flex items-start space-x-2">
-                      <FileText className="w-4 h-4 text-gray-400 mt-0.5" />
-                      <span className="line-clamp-2">{client.description}</span>
-                    </div>
-                  </div>
-
-                  {client.invoices.length > 0 && (
-                    <div className="text-xs text-gray-500 border-t pt-3">
-                      Счетов: {client.invoices.length} 
-                      {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
-                        ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
-                      }
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex space-x-2 ml-4">
+        <Tabs value={activeTab} onValueChange={v => setActiveTab(v as 'active' | 'completed')} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="active" className="flex items-center space-x-2">
+              <Filter className="w-4 h-4" />
+              <span>Активные ({activeClients.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="flex items-center space-x-2">
+              <Filter className="w-4 h-4" />
+              <span>Завершенные ({completedClients.length})</span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="active" className="space-y-4">
+            {activeClients.map((client) => (
+              <div key={client.id} className="relative group">
+                <ClientCard
+                  client={client}
+                  onClick={() => setSelectedClient(client)}
+                />
+                <div className="absolute top-4 right-4 flex space-x-2 opacity-100 group-hover:opacity-100 z-10">
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleEditClient(client)}
+                    onClick={e => { e.stopPropagation(); handleEditClient(client); }}
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleDeleteClient(client.id)}
+                    onClick={e => { e.stopPropagation(); handleDeleteClient(client.id); }}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
+            {activeClients.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                Нет активных клиентов
+              </div>
+            )}
+          </TabsContent>
+          <TabsContent value="completed" className="space-y-4">
+            {completedClients.map((client) => (
+              <div key={client.id} className="relative group">
+                <ClientCard
+                  client={client}
+                  onClick={() => setSelectedClient(client)}
+                />
+                <div className="absolute top-4 right-4 flex space-x-2 opacity-100 group-hover:opacity-100 z-10">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={e => { e.stopPropagation(); handleEditClient(client); }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={e => { e.stopPropagation(); handleDeleteClient(client.id); }}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {completedClients.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                Нет завершенных клиентов
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {filteredClients.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          {searchTerm ? 'Клиенты не найдены' : 'Нет клиентов'}
-        </div>
-      )}
-
       {/* Модальное окно создания клиента */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent>
@@ -267,7 +251,6 @@ const ClientsPage: React.FC = () => {
           </div>
         </DialogContent>
       </Dialog>
-
       {/* Модальное окно редактирования клиента */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <DialogContent>
