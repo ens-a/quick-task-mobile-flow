@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { mockClients } from '../../data/mockData';
 import type { Client } from '../../types/types';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ClientDetailsPage from '../../pages/executor/ClientDetailsPage';
 
 const ClientsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,6 +34,12 @@ const ClientsPage: React.FC = () => {
     address: '',
     description: ''
   });
+
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [activeTab, setActiveTab] = useState('active');
+
+  const activeClients = clients.filter(client => client.status === 'active');
+  const completedClients = clients.filter(client => client.status === 'completed');
 
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,6 +140,15 @@ const ClientsPage: React.FC = () => {
     }));
   };
 
+  if (selectedClient) {
+    return (
+      <ClientDetailsPage
+        client={selectedClient}
+        onBack={() => setSelectedClient(null)}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -150,80 +167,150 @@ const ClientsPage: React.FC = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4">
-        {filteredClients.map((client) => (
-          <Card key={client.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-800 mb-1">
-                        {client.name}
-                      </h3>
-                      <Badge 
-                        variant={client.status === 'active' ? 'default' : 'secondary'}
-                        className={client.status === 'active' ? 'bg-green-100 text-green-800' : ''}
-                      >
-                        {client.status === 'active' ? 'Активный' : 'Завершен'}
-                      </Badge>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="active" className="flex items-center space-x-2">
+            <span>Активные ({activeClients.length})</span>
+          </TabsTrigger>
+          <TabsTrigger value="completed" className="flex items-center space-x-2">
+            <span>Завершенные ({completedClients.length})</span>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="active" className="space-y-4">
+          {activeClients.map((client) => (
+            <Card key={client.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedClient(client)}>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-800 mb-1">
+                          {client.name}
+                        </h3>
+                        <Badge 
+                          variant={client.status === 'active' ? 'default' : 'secondary' as 'default' | 'secondary'}
+                        >
+                          {client.status === 'active' ? 'Активный' : 'Завершен'}
+                        </Badge>
+                      </div>
                     </div>
+                    <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>{client.address}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4 text-gray-400" />
+                        <span>{client.phone}</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <FileText className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <span className="line-clamp-2">{client.description}</span>
+                      </div>
+                    </div>
+                    {client.invoices.length > 0 && (
+                      <div className="text-xs text-gray-500 border-t pt-3">
+                        Счетов: {client.invoices.length} 
+                        {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
+                          ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
+                        }
+                      </div>
+                    )}
                   </div>
-
-                  <div className="space-y-2 text-sm text-gray-600 mb-4">
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="w-4 h-4 text-gray-400" />
-                      <span>{client.address}</span>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Phone className="w-4 h-4 text-gray-400" />
-                      <span>{client.phone}</span>
-                    </div>
-                    
-                    <div className="flex items-start space-x-2">
-                      <FileText className="w-4 h-4 text-gray-400 mt-0.5" />
-                      <span className="line-clamp-2">{client.description}</span>
-                    </div>
+                  <div className="flex space-x-2 ml-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={e => { e.stopPropagation(); handleEditClient(client); }}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={e => { e.stopPropagation(); handleDeleteClient(client.id); }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
-
-                  {client.invoices.length > 0 && (
-                    <div className="text-xs text-gray-500 border-t pt-3">
-                      Счетов: {client.invoices.length} 
-                      {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
-                        ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
-                      }
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {activeClients.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              Нет активных клиентов
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="completed" className="space-y-4">
+          {completedClients.map((client) => (
+            <Card key={client.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => setSelectedClient(client)}>
+              <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="font-semibold text-lg text-gray-800 mb-1">
+                          {client.name}
+                        </h3>
+                        <Badge 
+                          variant={client.status === 'active' ? 'default' : 'secondary' as 'default' | 'secondary'}
+                        >
+                          {client.status === 'active' ? 'Активный' : 'Завершен'}
+                        </Badge>
+                      </div>
                     </div>
-                  )}
+                    <div className="space-y-2 text-sm text-gray-600 mb-4">
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="w-4 h-4 text-gray-400" />
+                        <span>{client.address}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Phone className="w-4 h-4 text-gray-400" />
+                        <span>{client.phone}</span>
+                      </div>
+                      <div className="flex items-start space-x-2">
+                        <FileText className="w-4 h-4 text-gray-400 mt-0.5" />
+                        <span className="line-clamp-2">{client.description}</span>
+                      </div>
+                    </div>
+                    {client.invoices.length > 0 && (
+                      <div className="text-xs text-gray-500 border-t pt-3">
+                        Счетов: {client.invoices.length} 
+                        {client.invoices.filter(invoice => invoice.status === 'created').length > 0 && 
+                          ` (${client.invoices.filter(invoice => invoice.status === 'created').length} активных)`
+                        }
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex space-x-2 ml-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={e => { e.stopPropagation(); handleEditClient(client); }}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={e => { e.stopPropagation(); handleDeleteClient(client.id); }}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
-                
-                <div className="flex space-x-2 ml-4">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleEditClient(client)}
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => handleDeleteClient(client.id)}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {filteredClients.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          {searchTerm ? 'Клиенты не найдены' : 'Нет клиентов'}
-        </div>
-      )}
+              </CardContent>
+            </Card>
+          ))}
+          {completedClients.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              Нет завершенных клиентов
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {/* Модальное окно создания клиента */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
