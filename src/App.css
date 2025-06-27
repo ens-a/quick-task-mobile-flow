@@ -1,8 +1,9 @@
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .logo {
@@ -39,4 +40,40 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    overflow-x: hidden;
+  }
+  
+  .card {
+    padding: 1em;
+  }
+}
+
+/* Предотвращаем горизонтальный скролл */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Адаптивные контейнеры */
+.container {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }

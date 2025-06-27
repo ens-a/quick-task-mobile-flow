@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
-import { Users, LogOut, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Filter } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ClientCard from '@/components/common/ClientCard';
 import ClientDetailsPage from './ClientDetailsPage';
+import ExecutorLayout from '@/components/executor/ExecutorLayout';
 import { mockClients } from '../../data/mockData';
 import type { Client } from '../../types/types';
 
@@ -21,60 +22,44 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
 
   if (selectedClient) {
     return (
-      <ClientDetailsPage 
-        client={selectedClient} 
-        onBack={() => setSelectedClient(null)} 
-      />
+      <ExecutorLayout currentUser={currentUser} onLogout={onLogout}>
+        <ClientDetailsPage 
+          client={selectedClient} 
+          onBack={() => setSelectedClient(null)} 
+        />
+      </ExecutorLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-800">Мои клиенты</h1>
-              <p className="text-sm text-gray-500">{currentUser}</p>
-            </div>
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onLogout}
-            className="text-gray-600 hover:text-gray-800"
-          >
-            <LogOut className="w-5 h-5" />
-          </Button>
-        </div>
-      </header>
-
-      {/* Content */}
-      <div className="p-4">
+    <ExecutorLayout currentUser={currentUser} onLogout={onLogout}>
+      <div className="p-4 max-w-full">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="active" className="flex items-center space-x-2">
+            <TabsTrigger value="active" className="flex items-center space-x-2 text-sm">
               <Filter className="w-4 h-4" />
-              <span>Активные ({activeClients.length})</span>
+              <span className="hidden sm:inline">Активные</span>
+              <span className="sm:hidden">Активные</span>
+              <span>({activeClients.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="completed" className="flex items-center space-x-2">
+            <TabsTrigger value="completed" className="flex items-center space-x-2 text-sm">
               <Filter className="w-4 h-4" />
-              <span>Завершенные ({completedClients.length})</span>
+              <span className="hidden sm:inline">Завершенные</span>
+              <span className="sm:hidden">Завершенные</span>
+              <span>({completedClients.length})</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active" className="space-y-4">
-            {activeClients.map((client) => (
-              <ClientCard
-                key={client.id}
-                client={client}
-                onClick={() => setSelectedClient(client)}
-              />
-            ))}
+            <div className="grid gap-4 w-full">
+              {activeClients.map((client) => (
+                <ClientCard
+                  key={client.id}
+                  client={client}
+                  onClick={() => setSelectedClient(client)}
+                />
+              ))}
+            </div>
             {activeClients.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 Нет активных клиентов
@@ -83,13 +68,15 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           </TabsContent>
 
           <TabsContent value="completed" className="space-y-4">
-            {completedClients.map((client) => (
-              <ClientCard
-                key={client.id}
-                client={client}
-                onClick={() => setSelectedClient(client)}
-              />
-            ))}
+            <div className="grid gap-4 w-full">
+              {completedClients.map((client) => (
+                <ClientCard
+                  key={client.id}
+                  client={client}
+                  onClick={() => setSelectedClient(client)}
+                />
+              ))}
+            </div>
             {completedClients.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 Нет завершенных клиентов
@@ -98,7 +85,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, onLogout }) => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </ExecutorLayout>
   );
 };
 

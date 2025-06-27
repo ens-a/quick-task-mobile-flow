@@ -72,19 +72,19 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Мобильный хедер */}
       <header className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="px-4 py-3 flex items-center space-x-3">
           <Button 
             variant="ghost" 
             size="sm" 
             onClick={onBack}
-            className="p-2"
+            className="p-2 -ml-2"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div className="flex-1">
-            <h1 className="text-lg font-semibold text-gray-800">{client.name}</h1>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-semibold text-gray-800 truncate">{client.name}</h1>
             <Badge 
               variant={client.status === 'active' ? 'default' : 'secondary'}
               className={client.status === 'active' ? 'bg-green-100 text-green-800' : ''}
@@ -95,7 +95,7 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
         </div>
       </header>
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 max-w-full">
         {/* Client Info */}
         <Card>
           <CardHeader>
@@ -103,20 +103,20 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center space-x-3">
-              <Phone className="w-5 h-5 text-gray-400" />
-              <span className="text-gray-700">{client.phone}</span>
+              <Phone className="w-5 h-5 text-gray-400 flex-shrink-0" />
+              <span className="text-gray-700 break-all">{client.phone}</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-              <span className="text-gray-700">{client.address}</span>
+              <MapPin className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+              <span className="text-gray-700 break-words">{client.address}</span>
             </div>
             
             <div className="flex items-start space-x-3">
-              <FileText className="w-5 h-5 text-gray-400 mt-0.5" />
-              <div>
+              <FileText className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" />
+              <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-800 mb-1">Техническое задание:</p>
-                <p className="text-gray-700">{client.description}</p>
+                <p className="text-gray-700 break-words">{client.description}</p>
               </div>
             </div>
           </CardContent>
@@ -124,11 +124,11 @@ const ClientDetails: React.FC<ClientDetailsProps> = ({ client, onBack }) => {
 
         {/* Invoices Section */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <h2 className="text-xl font-semibold text-gray-800">Счета</h2>
             <Button 
               onClick={() => setShowCreateInvoice(true)}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto"
               size="sm"
             >
               <Plus className="w-4 h-4 mr-2" />
