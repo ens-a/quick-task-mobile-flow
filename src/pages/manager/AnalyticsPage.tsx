@@ -54,12 +54,12 @@ const AnalyticsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Period Analytics */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <h3 className="text-lg font-semibold flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2" />
-            Аналитика за период
+            <TrendingUp className="w-5 h-5 mr-2 flex-shrink-0" />
+            <span className="truncate">Аналитика за период</span>
           </h3>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant={dateRange === 'today' ? 'default' : 'outline'}
               size="sm"
@@ -92,19 +92,19 @@ const AnalyticsPage: React.FC = () => {
         </div>
         
         {dateRange === 'custom' && (
-          <div className="flex space-x-2 mb-4">
-            <Input type="date" className="w-auto" />
-            <span className="self-center">—</span>
-            <Input type="date" className="w-auto" />
-            <Button>Применить</Button>
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <Input type="date" className="w-full sm:w-auto" />
+            <span className="self-center text-center sm:text-left">—</span>
+            <Input type="date" className="w-full sm:w-auto" />
+            <Button className="w-full sm:w-auto">Применить</Button>
           </div>
         )}
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Всего заказов</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
+              <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{currentStats.orders}</div>
@@ -114,17 +114,17 @@ const AnalyticsPage: React.FC = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Закрыто заказов</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <TrendingUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{currentStats.completedOrders}</div>
             </CardContent>
           </Card>
           
-          <Card>
+          <Card className="sm:col-span-2 lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Общая выручка</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <DollarSign className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{currentStats.revenue.toLocaleString()} ₽</div>
@@ -141,11 +141,11 @@ const AnalyticsPage: React.FC = () => {
         <CardContent>
           <div className="space-y-4">
             {executorStats.map((executor, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                <div>
-                  <h4 className="font-medium">{executor.name}</h4>
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg gap-4">
+                <div className="min-w-0 flex-1">
+                  <h4 className="font-medium truncate">{executor.name}</h4>
                 </div>
-                <div className="flex space-x-6 text-sm">
+                <div className="flex justify-between sm:justify-start sm:space-x-6 text-sm">
                   <div className="text-center">
                     <div className="font-semibold">{executor.orders}</div>
                     <div className="text-gray-500">Заказов</div>
