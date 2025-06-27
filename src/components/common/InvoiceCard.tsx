@@ -129,34 +129,37 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
         </div>
 
         {/* PDF Link */}
-        {invoice.pdfUrl && (
-          <div className="mb-4 p-3 bg-purple-50 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <FileText className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium text-purple-800">PDF Инвойс</span>
-              </div>
-              <div className="flex space-x-2">
-                <Button
-                  onClick={() => window.open(invoice.pdfUrl, '_blank')}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 px-2"
-                >
-                  <Link className="w-3 h-3" />
-                </Button>
-                <Button
-                  onClick={handleCopyPdfLink}
-                  size="sm"
-                  variant="outline"
-                  className="h-7 px-2"
-                >
-                  <Copy className="w-3 h-3" />
-                </Button>
-              </div>
+        <div className="mb-4 p-3 bg-purple-50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <FileText className="w-4 h-4 text-purple-600" />
+              <span className="text-sm font-medium text-purple-800">PDF Инвойс</span>
+            </div>
+            <div className="flex space-x-2">
+              <Button
+                onClick={() => invoice.pdfUrl && window.open(invoice.pdfUrl, '_blank')}
+                size="sm"
+                variant="outline"
+                className="h-7 px-2"
+                disabled={!invoice.pdfUrl}
+              >
+                <Link className="w-3 h-3" />
+              </Button>
+              <Button
+                onClick={handleCopyPdfLink}
+                size="sm"
+                variant="outline"
+                className="h-7 px-2"
+                disabled={!invoice.pdfUrl}
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
             </div>
           </div>
-        )}
+          {!invoice.pdfUrl && (
+            <div className="mt-2 text-xs text-gray-500">PDF не загружен</div>
+          )}
+        </div>
 
         {/* Services */}
         {invoice.services.length > 0 && (
